@@ -18,7 +18,10 @@
   },
   "homepage": "https://github.com/SDC-KepPenny/reviews-service#readme",
   "dependencies": {
+    "axios": "^0.21.1",
+    "body-parser": "^1.19.0",
     "csvtojson": "^2.0.10",
+    "express": "^4.17.1",
     "fs": "0.0.1-security",
     "moment": "^2.29.1",
     "mongoose": "^5.12.7",
@@ -26,6 +29,7 @@
     "split": "^1.0.1"
   },
   "devDependencies": {
-    "eslint": "^7.25.0"
+    "eslint": "^7.25.0",
+    "nodemon": "^2.0.7"
   }
 }
