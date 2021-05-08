@@ -1,9 +1,30 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../../db');
+const GroupedReviews = require('../../db/models/GroupedReviews.js');
 
 router.get('/', (req, res) => {
-  res.send('reviews route working');
+  const { product_id, sort } = req.query;
+  const page = req.query.page || 1;
+  const count = req.query.count || 5;
+
+  // pagination helper variables:
+  const startIndex = count * (page - 1);
+  const endIndex = startIndex + count;
+
+  const formattedResult = {};
+
+  GroupedReviews.findOne({product: product_id})
+    .then((queryResult) => {
+      const reviews = queryResult.results.slice(startIndex, endIndex);
+      queryResult.results = reviews;
+      Object.assign(formattedResult, queryResult);
+      formattedResult._doc.page = page;
+      formattedResult._doc.count = count;
+      res.status(200).send(formattedResult._doc);
+    })
+    .catch(err => console.log(err));
+
 });
 
 
