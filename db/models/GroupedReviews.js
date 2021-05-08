@@ -7,7 +7,7 @@ const groupedReviewSchema = new mongoose.Schema({
   results: []
 }, {collection: "reviewsGroupedByProductId"});
 
-const GroupedReviews = mongoose.model('ProductReview', groupedReviewSchema);
+const GroupedReviews = mongoose.model('reviewsGroupedByProductId', groupedReviewSchema);
 
 
 

@@ -19,7 +19,7 @@ const productReviewSchema = new mongoose.Schema({
   photos: []
 });
 
-const ProductReview = mongoose.model('ProductReview', productReviewSchema);
+const ProductReview = mongoose.models.ProductReview || mongoose.model('ProductReview', productReviewSchema);
 
 
 
