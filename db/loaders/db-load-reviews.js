@@ -4,7 +4,7 @@ const { pipeline } = require('stream');
 const split = require('split');
 
 
-const reviewsReadStream = fs.createReadStream('../etl/writes/realReviews.json');
+const reviewsReadStream = fs.createReadStream('../../etl/writes/realReviews.json');
 // const reviewPhotosStream = fs.createReadStream('../etl/writes/test-writes/dummyReviewPhotos.ndjson');
 
 reviewsReadStream.pipe(split(JSON.parse))
@@ -34,23 +34,6 @@ reviewsReadStream.pipe(split(JSON.parse))
     console.log('///Reviews loading completed///');
   })
 
-
-// reviewPhotosStream.pipe(split(JSON.parse))
-//   .on('data', (obj) => {
-//     const targetReviewId = obj.review_id;
-//     const photoURL = obj.url;
-
-//     ProductReview.findOneAndUpdate(
-//       {
-//         results.review_id: targetReviewId
-//       },
-//       {
-//         $push: {
-//           results.photos: photoURL;
-//         }
-//       }
-//     )
-//   })
 
 
 
