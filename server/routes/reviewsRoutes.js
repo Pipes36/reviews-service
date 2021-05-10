@@ -119,49 +119,10 @@ router.put('/:review_id/helpful', (req, res) => {
 });
 
 
-/*
-{
-  product_id: integer,
-  rating: integer,
-  summary: string,
-  body: string,
-  recommend: bool,
-  name: string,
-  email: string,
-  photos: [url, url, url],
-  characteristics: {
-    characteristic_id: int,
-    characteristic_id: int
-    characteristic_id: int
-  }
-}
 
-{
-  product_id: 1,
-  rating: 5,
-  summary: 'a new review by Pep',
-  body: 'This is a test review, newly created by Pep.',
-  recommend: true,
-  name: PepPep,
-  email: Pep@pepmail.com,
-  photos: ['https://cdn.buttercms.com/ZF8K2t8hT8OoNR3W42bX', 'https://cdn.buttercms.com/ZF8K2t8hT8OoNR3W42bX'],
-  characteristics: {
-    1: 5,
-    2: 5,
-    3: 5,
-    4: 5
-  }
-}
-
-{"product_id":1,"rating":5,"summary":"a new review by Pep","body":"This is a test review, newly created by Pep.","recommend":true,"name":"PepPep","email":"Pep@pepmail.com","photos":["https://cdn.buttercms.com/ZF8K2t8hT8OoNR3W42bX","https://cdn.buttercms.com/ZF8K2t8hT8OoNR3W42bX"],"characteristics":{"1":5,"2":5,"3":5,"4":5}}
-
-*/
-
-// submitting review means that product already exists
-  // new review must be created in ungrouped collection
-  // but new review is only pushed into grouped collection
 router.post('/', (req, res) => {
 
+  // EXTRACT REVIEW DETAILS FROM REQ BODY
   const {
     product_id,
     rating,
@@ -178,6 +139,7 @@ router.post('/', (req, res) => {
   const reviewTime = moment().format();
   console.log(`---- review_id generated: ${uniqueId} at ${reviewTime} ----`);
 
+  // FORMAT INTO A NEW REVIEW OBJECT
   const formattedReview = {
     product_id: Number(product_id),
     rating: Number(rating),
@@ -194,11 +156,13 @@ router.post('/', (req, res) => {
     date: reviewTime
   };
 
+  // SAVE AS STANDALONE REVIEW
   const newReview = new ProductReview (formattedReview);
   const saveReview = newReview.save((err) => {
     if (err) console.log('err saving new standalone review', err.message)
   })
 
+  // PUSH NEW REVIEW INTO RELEVANT PRODUCT COLLECTION
   const saveReviewByProductId = GroupedReviews.find({product: product_id})
     .then((result) => {
       const product = result[0];
@@ -212,7 +176,7 @@ router.post('/', (req, res) => {
       if (err) console.log('err saving new review by product ID', err.message);
     });
 
-
+  // UPDATE META DATA OF RELEVANT PRODUCT
   const updateMetaData = ProductMeta.findOne({product_id})
     .then((metaData) => {
       const ratings = metaData.ratings; // {}
@@ -246,9 +210,10 @@ router.post('/', (req, res) => {
       res.send(500);
     });
 
+  // ONCE ALL PROCESSES RESOLVED, SEND 201
   Promise.all([saveReview, saveReviewByProductId, updateMetaData])
     .then(() => {
-      console.log('New review details saved!')
+      console.log('---- New review details saved! ----')
       res.send(201);
     })
     .catch((err) => {
@@ -260,3 +225,43 @@ router.post('/', (req, res) => {
 
 
 module.exports = router;
+
+/*
+
+  {
+    product_id: integer,
+    rating: integer,
+    summary: string,
+    body: string,
+    recommend: bool,
+    name: string,
+    email: string,
+    photos: [url, url, url],
+    characteristics: {
+      characteristic_id: int,
+      characteristic_id: int
+      characteristic_id: int
+    }
+  }
+
+  {
+    product_id: 1,
+    rating: 5,
+    summary: 'a new review by Pep',
+    body: 'This is a test review, newly created by Pep.',
+    recommend: true,
+    name: PepPep,
+    email: Pep@pepmail.com,
+    photos: ['https://cdn.buttercms.com/ZF8K2t8hT8OoNR3W42bX', 'https://cdn.buttercms.com/ZF8K2t8hT8OoNR3W42bX'],
+    characteristics: {
+      1: 5,
+      2: 5,
+      3: 5,
+      4: 5
+    }
+  }
+
+  {"product_id":1,"rating":5,"summary":"a new review by Pep","body":"This is a test review, newly created by Pep.","recommend":true,"name":"PepPep","email":"Pep@pepmail.com","photos":["https://cdn.buttercms.com/ZF8K2t8hT8OoNR3W42bX","https://cdn.buttercms.com/ZF8K2t8hT8OoNR3W42bX"],"characteristics":{"1":5,"2":5,"3":5,"4":5}}
+
+*/
+
