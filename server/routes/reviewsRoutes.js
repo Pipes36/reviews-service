@@ -36,25 +36,25 @@ router.get('/', (req, res) => {
 
 });
 
+
 router.put('/:review_id/report', (req, res) => {
   const { review_id } = req.params;
-  let product;
+  let product; // product_id related to review_id
 
   ProductReview.findOne({review_id})
     .then((foundReview) => {
-      product = foundReview.product_id;
+      product = foundReview.product_id; // noting down product_id
       foundReview.reported = !foundReview.reported;
       foundReview.save()
+
         .then(() => {
           GroupedReviews.findOne({product})
             .then((groupedReview) => {
-              const reviewsCopy = groupedReview.results.slice();
-              for (let i = 0; i < reviewsCopy.length; i++) {
+              const reviews = groupedReview.results;
+              for (let i = 0; i < reviews.length; i++) {
 
-                if (reviewsCopy[i].review_id === Number(review_id)) {
-
-                  reviewsCopy[i].reported = !reviewsCopy[i].reported;
-                  groupedReview.results = reviewsCopy;
+                if (reviews[i].review_id === Number(review_id)) {
+                  reviews[i].reported = !reviews[i].reported;
                   break;
                 }
               }
@@ -74,5 +74,43 @@ router.put('/:review_id/report', (req, res) => {
     console.log(err);
   })
 });
+
+
+router.put('/:review_id/helpful', (req, res) => {
+  const { review_id } = req.params;
+  let product; // product_id related to review_id
+
+  ProductReview.findOne({review_id})
+    .then((foundReview) => {
+      product = foundReview.product_id; // noting down product_id
+      foundReview.helpfulness++;
+      foundReview.save()
+        .then(() => {
+          GroupedReviews.findOne({product})
+            .then((groupedReview) => {
+              const reviews = groupedReview.results;
+              for (let i = 0; i < reviews.length; i++) {
+                if (reviews[i].review_id === Number(review_id)) {
+                  reviews[i].helpfulness++;
+                  break;
+                }
+              }
+              groupedReview.markModified('results');
+              groupedReview.save((err) => {
+                if (err) {
+                  console.log(err );
+                } else {
+                  console.log('//Review marked as helpful//');
+                  res.sendStatus(200);
+                }
+              })
+            })
+        })
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+});
+
 
 module.exports = router;

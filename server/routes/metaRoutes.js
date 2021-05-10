@@ -8,6 +8,7 @@ router.get('/', (req, res) => {
   const { product_id } = req.query;
 
   //TODO: explore saving changes on first fetch to save time on subsequent fetches.
+
   ProductMeta.findOne({product_id})
     .then((metaData) => {
       const inputCharac = metaData.characteristics;
@@ -22,7 +23,7 @@ router.get('/', (req, res) => {
       });
 
       metaData.characteristics = outputCharac;
-      res.send(metaData);
+      res.status(200).send(metaData);
 
     })
 
