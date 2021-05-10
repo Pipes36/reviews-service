@@ -17,7 +17,8 @@ router.get('/', (req, res) => {
         if (charac.count) {
           outputCharac[charac.name] = {
             value: charac.avgValue,
-            count: charac.count
+            count: charac.count,
+            id: charac.characteristic_id
           };
         }
       });

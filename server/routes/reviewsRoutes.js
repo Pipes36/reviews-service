@@ -1,9 +1,13 @@
 const express = require('express');
+const { v4: uuidv4 } = require('uuid');
+const moment = require('moment');
 const router = express.Router();
 const db = require('../../db');
 const GroupedReviews = require('../../db/models/GroupedReviews.js');
 const ProductReview = require('../../db/models/Reviews.js');
+const ProductMeta = require('../../db/models/ProductMeta.js');
 
+// TODO: abstract out function(ality) from logic
 
 // TODO: Implement sorting
 router.get('/', (req, res) => {
@@ -64,18 +68,19 @@ router.put('/:review_id/report', (req, res) => {
                   console.log(err );
                 } else {
                   console.log('//Review reported//');
-                  res.sendStatus(200);
+                  res.sendStatus(204);
                 }
               })
             })
     })
   })
   .catch((err) => {
-    console.log(err);
+    console.log('err while reporting review', err);
+    res.send(500);
   })
 });
 
-
+//TODO: refactor - DRY
 router.put('/:review_id/helpful', (req, res) => {
   const { review_id } = req.params;
   let product; // product_id related to review_id
@@ -101,15 +106,156 @@ router.put('/:review_id/helpful', (req, res) => {
                   console.log(err );
                 } else {
                   console.log('//Review marked as helpful//');
-                  res.sendStatus(200);
+                  res.sendStatus(204);
                 }
               })
             })
         })
     })
     .catch((err) => {
-      console.log(err);
+      console.log('err marking review as helpful', err);
+      res.send(500);
     })
+});
+
+
+/*
+{
+  product_id: integer,
+  rating: integer,
+  summary: string,
+  body: string,
+  recommend: bool,
+  name: string,
+  email: string,
+  photos: [url, url, url],
+  characteristics: {
+    characteristic_id: int,
+    characteristic_id: int
+    characteristic_id: int
+  }
+}
+
+{
+  product_id: 1,
+  rating: 5,
+  summary: 'a new review by Pep',
+  body: 'This is a test review, newly created by Pep.',
+  recommend: true,
+  name: PepPep,
+  email: Pep@pepmail.com,
+  photos: ['https://cdn.buttercms.com/ZF8K2t8hT8OoNR3W42bX', 'https://cdn.buttercms.com/ZF8K2t8hT8OoNR3W42bX'],
+  characteristics: {
+    1: 5,
+    2: 5,
+    3: 5,
+    4: 5
+  }
+}
+
+{"product_id":1,"rating":5,"summary":"a new review by Pep","body":"This is a test review, newly created by Pep.","recommend":true,"name":"PepPep","email":"Pep@pepmail.com","photos":["https://cdn.buttercms.com/ZF8K2t8hT8OoNR3W42bX","https://cdn.buttercms.com/ZF8K2t8hT8OoNR3W42bX"],"characteristics":{"1":5,"2":5,"3":5,"4":5}}
+
+*/
+
+// submitting review means that product already exists
+  // new review must be created in ungrouped collection
+  // but new review is only pushed into grouped collection
+router.post('/', (req, res) => {
+
+  const {
+    product_id,
+    rating,
+    summary,
+    body,
+    recommend,
+    name,
+    email,
+    photos,
+    characteristics
+  } = req.body;
+
+  const uniqueId = uuidv4();
+  const reviewTime = moment().format();
+  console.log(`---- review_id generated: ${uniqueId} at ${reviewTime} ----`);
+
+  const formattedReview = {
+    product_id: Number(product_id),
+    rating: Number(rating),
+    summary,
+    body,
+    recommend: (recommend === "true"),
+    reviewer_name: name,
+    reviewer_email: email,
+    photos,
+    response: "null",
+    reported: false,
+    helpfulness: 0,
+    review_id: uniqueId,
+    date: reviewTime
+  };
+
+  const newReview = new ProductReview (formattedReview);
+  const saveReview = newReview.save((err) => {
+    if (err) console.log('err saving new standalone review', err.message)
+  })
+
+  const saveReviewByProductId = GroupedReviews.find({product: product_id})
+    .then((result) => {
+      const product = result[0];
+      product.results.push(formattedReview);
+      product.markModified('results');
+      product.save((err) => {
+        if (err) console.log(err.message)
+      })
+    })
+    .catch((err) => {
+      if (err) console.log('err saving new review by product ID', err.message);
+    });
+
+
+  const updateMetaData = ProductMeta.findOne({product_id})
+    .then((metaData) => {
+      const ratings = metaData.ratings; // {}
+      const recommends = metaData.recommend; // {}
+      const characs = metaData.characteristics; // []
+
+      ratings[rating]++;
+      recommends[recommend.toString()]++
+
+      for (let i = 0; i < characs.length; i++) {
+        const currentCharacId = characs[i].characteristic_id;
+        const newCharacScore = characteristics[currentCharacId];
+
+        const count = characs[i].count++;
+        const oldAvg = characs[i].avgValue;
+
+        const newAvg = oldAvg * ((count-1) / count) + (newCharacScore / count);
+        characs[i].avgValue = newAvg;
+      }
+
+      metaData.markModified('ratings');
+      metaData.markModified('recommend');
+      metaData.markModified('characteristics');
+
+      metaData.save((err) => {
+        if (err) console.log('err updating characteristic scores', err.message);
+      })
+    })
+    .catch((err) => {
+      console.log('err saving new review', err.message);
+      res.send(500);
+    });
+
+  Promise.all([saveReview, saveReviewByProductId, updateMetaData])
+    .then(() => {
+      console.log('New review details saved!')
+      res.send(201);
+    })
+    .catch((err) => {
+      console.log('Error saving details from new review posted (POST/reviews route)');
+      res.send(500);
+    });
+
 });
 
 

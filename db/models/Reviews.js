@@ -5,7 +5,7 @@ const { pipeline } = require('stream');
 
 const productReviewSchema = new mongoose.Schema({
   product_id: {type: Number, required: true},
-  review_id: {type: Number, unique: true},
+  review_id: {type: Object, unique: true},
   rating: {type: Number, required: true},
   summary: {type: String, required: true},
   recommend: Boolean,
