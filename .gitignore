@@ -1,5 +1,7 @@
 node_modules
 csv
-*/writes
-*/test-writes
+writes
+test-writes
+db/ETL
+ETL
 mongodata
