@@ -1,9 +1,9 @@
-const Characteristics = require('./Characteristics.js');
+const Characteristics = require('../models/Characteristics.js');
 const fs = require('fs');
 const { pipeline } = require('stream');
 const split = require('split');
 
-const characteristicsStream = fs.createReadStream('../../etl/writes/characteristics.json');
+const characteristicsStream = fs.createReadStream('../etl/writes/characteristics.json');
 
 
 characteristicsStream.pipe(split(JSON.parse))

@@ -121,7 +121,6 @@ router.put('/:review_id/helpful', (req, res) => {
 
 
 router.post('/', (req, res) => {
-
   // EXTRACT REVIEW DETAILS FROM REQ BODY
   const {
     product_id,
