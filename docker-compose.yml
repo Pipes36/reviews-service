@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  server:
+    container_name: reviews-api-service
+    restart: always
+    build: .
+    ports:
+      - '80:8000'
+    links:
+      - db
+  db:
+    container_name: mongo
+    restart: always
+    image: mongo:latest
+    ports:
+      - '27017:27017'
+    volumes:
+      - ./mongodata:/data/db

@@ -1,9 +1,9 @@
-const ReviewPhotos = require('./ReviewPhotos.js');
+const ReviewPhotos = require('../models/ReviewPhotos.js');
 const fs = require('fs');
 const { pipeline } = require('stream');
 const split = require('split');
 
-const reviewPhotosStream = fs.createReadStream('../../etl/writes/reviewPhotos.json');
+const reviewPhotosStream = fs.createReadStream('../etl/writes/reviewPhotos.json');
 
 
 reviewPhotosStream.pipe(split(JSON.parse))
