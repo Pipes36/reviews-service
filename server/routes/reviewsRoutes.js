@@ -42,11 +42,12 @@ router.get('/', (req, res) => {
 
 
 router.put('/:review_id/report', (req, res) => {
-  const { review_id } = req.params;
+  const review_id = Number(req.params.review_id);
   let product; // product_id related to review_id
 
   ProductReview.findOne({review_id})
     .then((foundReview) => {
+      console.log(foundReview);
       product = foundReview.product_id; // noting down product_id
       foundReview.reported = !foundReview.reported;
       foundReview.save()
@@ -82,7 +83,7 @@ router.put('/:review_id/report', (req, res) => {
 
 //TODO: refactor - DRY
 router.put('/:review_id/helpful', (req, res) => {
-  const { review_id } = req.params;
+  const review_id = Number(req.params.review_id);
   let product; // product_id related to review_id
 
   ProductReview.findOne({review_id})
