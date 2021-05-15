@@ -32,5 +32,3 @@ pipeline(inputStream, csvParser, transformStream, outputStream, (err) => {
   }
 });
 
-// console.log('!!!', Number("Fri Nov 13 2020 13:34:42 GMT-0500 (Eastern Standard Time)"));
-

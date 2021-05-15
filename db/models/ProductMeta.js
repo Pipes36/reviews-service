@@ -10,4 +10,5 @@ const productMetaSchema = new mongoose.Schema({
 
 const ProductMeta = mongoose.model('metaData-merged', productMetaSchema);
 
+
 module.exports = ProductMeta;

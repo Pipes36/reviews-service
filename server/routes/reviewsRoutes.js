@@ -81,6 +81,7 @@ router.put('/:review_id/report', (req, res) => {
   })
 });
 
+
 //TODO: refactor - DRY
 router.put('/:review_id/helpful', (req, res) => {
   const review_id = Number(req.params.review_id);
@@ -118,7 +119,6 @@ router.put('/:review_id/helpful', (req, res) => {
       res.send(500);
     })
 });
-
 
 
 router.post('/', (req, res) => {
@@ -228,40 +228,9 @@ module.exports = router;
 
 /*
 
-  {
-    product_id: integer,
-    rating: integer,
-    summary: string,
-    body: string,
-    recommend: bool,
-    name: string,
-    email: string,
-    photos: [url, url, url],
-    characteristics: {
-      characteristic_id: int,
-      characteristic_id: int
-      characteristic_id: int
-    }
-  }
+  JSON for a dummy post:
 
-  {
-    product_id: 1,
-    rating: 5,
-    summary: 'a new review by Pep',
-    body: 'This is a test review, newly created by Pep.',
-    recommend: true,
-    name: PepPep,
-    email: Pep@pepmail.com,
-    photos: ['https://cdn.buttercms.com/ZF8K2t8hT8OoNR3W42bX', 'https://cdn.buttercms.com/ZF8K2t8hT8OoNR3W42bX'],
-    characteristics: {
-      1: 5,
-      2: 5,
-      3: 5,
-      4: 5
-    }
-  }
-
-  {"product_id":1,"rating":5,"summary":"a new review by Pep","body":"This is a test review, newly created by Pep.","recommend":true,"name":"PepPep","email":"Pep@pepmail.com","photos":["https://cdn.buttercms.com/ZF8K2t8hT8OoNR3W42bX","https://cdn.buttercms.com/ZF8K2t8hT8OoNR3W42bX"],"characteristics":{"1":5,"2":5,"3":5,"4":5}}
+  {"product_id":1,"rating":5,"summary":"A new review by some user","body":"This is a test review, newly created by some user.","recommend":true,"name":"SomeUser","email":"user@gmail.com","photos":["https://cdn.buttercms.com/ZF8K2t8hT8OoNR3W42bX","https://cdn.buttercms.com/ZF8K2t8hT8OoNR3W42bX"],"characteristics":{"1":5,"2":5,"3":5,"4":5}}
 
 */
 

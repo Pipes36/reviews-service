@@ -12,9 +12,3 @@ module.exports.dateTransform = (reviewObject) => {
   return reviewObject;
 
 }
-
-// const obj = {
-//   date: '1606045468366'
-// }
-
-// dateTransform(obj);

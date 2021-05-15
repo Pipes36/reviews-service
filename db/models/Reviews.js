@@ -1,7 +1,5 @@
 const mongoose = require('mongoose');
 const db = require('../index.js');
-const fs = require('fs');
-const { pipeline } = require('stream');
 
 const productReviewSchema = new mongoose.Schema({
   product_id: {type: Number, required: true},
@@ -20,7 +18,6 @@ const productReviewSchema = new mongoose.Schema({
 });
 
 const ProductReview = mongoose.models.ProductReview || mongoose.model('ProductReview', productReviewSchema);
-
 
 
 

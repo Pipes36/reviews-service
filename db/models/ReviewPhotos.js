@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const db = require('../index.js');
-const fs = require('fs');
 
 const reviewPhotosSchema = new mongoose.Schema({
   review_id: {type: Number, unique: true},
@@ -8,7 +7,6 @@ const reviewPhotosSchema = new mongoose.Schema({
 });
 
 const ReviewPhotos = mongoose.model('ReviewPhotos', reviewPhotosSchema);
-
 
 
 module.exports = ReviewPhotos;
