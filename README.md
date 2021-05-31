@@ -1,16 +1,16 @@
 # reviews-service
 
-A containerized REST API service connected to a MongoDB database, scaled with Docker Swarm.
+A containerized REST API service which allows a front-end application to perform CRUD operations against a MongoDB database containing 5.7mn user reviews documents. The service queries a MongoDB database, and is horizontally scaled using Docker Swarm orchestration tool.
 
 ## Technology Stack
 
-- Node.js
-- Express
-- MongoDB
-- AWS - EC2
-- Docker
-- Docker Swarm
-- Loader.io
+- [Node.js](https://nodejs.org/)
+- [Express](https://expressjs.com/)
+- [MongoDB](https://www.mongodb.com/)
+- [AWS - EC2](https://docs.aws.amazon.com/ec2/index.html?nc2=h_ql_doc_ec2#amazon-ec2)
+- [Docker](https://www.docker.com/)
+- [Docker Swarm](https://docs.docker.com/engine/swarm/)
+- [Loader.io](https://loader.io/)
 
 ## Description
 
